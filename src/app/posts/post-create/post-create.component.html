@@ -1,0 +1,25 @@
+<mat-card>
+  <mat-card-title>Add a New Post</mat-card-title>
+  <form (ngSubmit) = "onSubmit()" [formGroup] = "postForm">
+    <mat-form-field>
+      <input type = "text" matInput formControlName = "title" placeholder = "Title" required>
+      <mat-error *ngIf="controls.title.errors?.required">Title is required</mat-error>
+    </mat-form-field>
+    <mat-form-field>
+      <textarea matInput formControlName = "content" id = "post" name = "post" rows = "6"
+                placeholder = "Content" required></textarea>
+      <mat-error *ngIf="controls.content.errors?.required">Content is required</mat-error>
+    </mat-form-field>
+    <mat-card-actions>
+       <!--
+            Using the postForm.value check due to an existing issue with the FormsModule.reset() function
+            due to which the errors in the child FormControl are not reset properly
+        -->
+      <button mat-raised-button color = "primary" id = "save" name = "save" type = "submit"
+              [disabled] = "postForm.invalid || postForm.value.title === null || postForm.value.content === null">
+        Save
+      </button>
+      <button mat-raised-button color = "warn" id = "cancel" name = "cancel" type = "reset">Cancel</button>
+    </mat-card-actions>
+  </form>
+</mat-card>
