@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { Post } from './post.model';
 
 @Injectable({providedIn: 'root'})
@@ -12,14 +13,33 @@ export class PostService {
   }
 
   addPost(post: Post) {
-    this.posts.push(post);
-    this.postsChanged.next(this.posts.slice());
+    this.httpClient.post<{message: string, post: Post}>('http://localhost:3000/api/posts', post)
+      .subscribe((response) => {
+        this.posts.push(response.post);
+        this.postsChanged.next(this.posts.slice());
+      });
+  }
+
+  deletePost(id: string) {
+    this.httpClient.delete(`http://localhost:3000/api/posts/${id}`)
+      .subscribe((response) => {
+        this.getPosts();
+      });
   }
 
   getPosts() {
-    this.httpClient.get<{ message: string, posts: Post[] }>('http://localhost:3000/api/posts')
-      .subscribe((response) => {
-        this.posts = response.posts;
+    this.httpClient.get<{ message: string, posts: any }>('http://localhost:3000/api/posts')
+      .pipe(map((postData) => {
+        return postData.posts.map(post => {
+          return {
+            id: post._id,
+            content: post.cotent,
+            title: post.title
+          };
+        });
+      }))
+      .subscribe((data) => {
+        this.posts = data;
         this.postsChanged.next(this.posts.slice());
       });
   }
