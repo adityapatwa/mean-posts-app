@@ -33,7 +33,7 @@ export class PostService {
         return postData.posts.map(post => {
           return {
             id: post._id,
-            content: post.cotent,
+            content: post.content,
             title: post.title
           };
         });
