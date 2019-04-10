@@ -3,7 +3,7 @@ import {
   MatButtonModule,
   MatCardModule,
   MatExpansionModule,
-  MatInputModule,
+  MatInputModule, MatProgressSpinnerModule,
   MatSelectModule,
   MatToolbarModule
 } from '@angular/material';
@@ -13,7 +13,7 @@ import {
     MatButtonModule,
     MatCardModule,
     MatExpansionModule,
-    MatInputModule,
+    MatInputModule, MatProgressSpinnerModule,
     MatSelectModule,
     MatToolbarModule
   ],
@@ -21,7 +21,7 @@ import {
     MatButtonModule,
     MatCardModule,
     MatExpansionModule,
-    MatInputModule,
+    MatInputModule, MatProgressSpinnerModule,
     MatSelectModule,
     MatToolbarModule
   ]

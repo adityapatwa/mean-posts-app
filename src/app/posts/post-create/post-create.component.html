@@ -1,6 +1,8 @@
 <mat-card>
-  <mat-card-title>Add a New Post</mat-card-title>
-  <form (ngSubmit) = "onSubmit()" [formGroup] = "postForm">
+  <mat-spinner *ngIf="isLoading"></mat-spinner>
+  <mat-card-title *ngIf="!editMode">Add a New Post</mat-card-title>
+  <mat-card-title *ngIf="editMode">Edit Post</mat-card-title>
+  <form (ngSubmit) = "onSubmit()" [formGroup] = "postForm" *ngIf="!isLoading">
     <mat-form-field>
       <input type = "text" matInput formControlName = "title" placeholder = "Title" required>
       <mat-error *ngIf="controls.title.errors?.required">Title is required</mat-error>
@@ -19,7 +21,10 @@
               [disabled] = "postForm.invalid || postForm.value.title === null || postForm.value.content === null">
         Save
       </button>
-      <button mat-raised-button color = "warn" id = "cancel" name = "cancel" type = "reset">Cancel</button>
+      <button mat-raised-button color = "warn" id = "cancel" name = "cancel" type = "reset"
+              routerLink="/">
+        Cancel
+      </button>
     </mat-card-actions>
   </form>
 </mat-card>

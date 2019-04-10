@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute, ParamMap } from '@angular/router';
 import { PostService } from '../post.service';
 
 @Component({
@@ -8,25 +9,44 @@ import { PostService } from '../post.service';
   styleUrls: ['./post-create.component.css']
 })
 export class PostCreateComponent implements OnInit {
+  editMode: boolean;
   postForm: FormGroup;
+  private postId: string;
+  isLoading = false;
 
-  constructor(private postService: PostService) {
+  constructor(private postService: PostService, private route: ActivatedRoute) {
+  }
+
+  get controls() {
+    return this.postForm.controls;
   }
 
   ngOnInit() {
-    this.initForm();
+    this.route.paramMap.subscribe((paramMap: ParamMap) => {
+      if (paramMap.has('id')) {
+        this.postId = paramMap.get('id');
+        this.isLoading = true;
+        this.editMode = true;
+      } else {
+        this.editMode = false;
+      }
+      this.initForm();
+    });
   }
 
   onSubmit() {
-    this.postService.addPost(this.postForm.value);
+    if (this.editMode) {
+      const updatedPost = {
+        id: this.postId,
+        content: this.postForm.value.content,
+        title: this.postForm.value.title
+      };
+      this.postService.editPost(updatedPost);
+    } else {
+      this.postService.addPost(this.postForm.value);
+    }
+    this.isLoading = true;
     this.resetForm();
-  }
-
-  private initForm() {
-    this.postForm = new FormGroup({
-      title: new FormControl(null, Validators.required),
-      content: new FormControl(null, Validators.required),
-    });
   }
 
   resetForm() {
@@ -36,7 +56,21 @@ export class PostCreateComponent implements OnInit {
     });
   }
 
-  get controls() {
-    return this.postForm.controls;
+  private initForm() {
+    this.postForm = new FormGroup({
+      title: new FormControl('', Validators.required),
+      content: new FormControl('', Validators.required)
+    });
+
+    if (this.editMode) {
+      this.postService.getPost(this.postId);
+      this.postService.getPostUpdatedListener().subscribe((post) => {
+        this.isLoading = false;
+        this.postForm.patchValue({
+          title: post.title,
+          content: post.content
+        });
+      });
+    }
   }
 }
